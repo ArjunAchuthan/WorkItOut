@@ -176,7 +176,7 @@ export default function Settings() {
                           <Input
                             id="name"
                             name="name"
-                            value={userProfile && userProfile.userData.name}
+                            value={userProfile?.userData?.name || ""}
                             onChange={handleProfileChange}
                           />
                         </div>
@@ -186,7 +186,7 @@ export default function Settings() {
                             id="email"
                             name="email"
                             type="email"
-                            value={userProfile && userProfile.userData.email}
+                            value={userProfile?.userData?.email || ""}
                             onChange={handleProfileChange}
                           />
                         </div>
@@ -199,7 +199,7 @@ export default function Settings() {
                             id="height"
                             name="height"
                             type="number"
-                            value={userProfile && userProfile.height}
+                            value={userProfile?.height || ""}
                             onChange={handleProfileChange}
                           />
                         </div>
@@ -209,7 +209,7 @@ export default function Settings() {
                             id="weight"
                             name="weight"
                             type="number"
-                            value={userProfile && userProfile.weight}
+                            value={userProfile?.weight || ""}
                             onChange={handleProfileChange}
                           />
                         </div>
@@ -219,7 +219,7 @@ export default function Settings() {
                             id="age"
                             name="age"
                             type="number"
-                            value={userProfile && userProfile.age}
+                            value={userProfile?.age || ""}
                             onChange={handleProfileChange}
                           />
                         </div>

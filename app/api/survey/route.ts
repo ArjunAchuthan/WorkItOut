@@ -3,34 +3,46 @@ import { connectDB } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
-    const { email,weight,height,age,gender,experienceLevel,activityLevel,workoutDuration,healthConditions, workoutEnvironment,fitnessGoal,equipment} = await request.json();
+    const { 
+      email, weight, height, age, gender, experienceLevel, activityLevel, 
+      workoutDuration, healthConditions, workoutEnvironment, fitnessGoal, equipment
+    } = await request.json();
     
     const db = await connectDB();
     
-    // Check if email already exists
-    const [existingUsers] = await db.execute(
-      'SELECT * FROM survey_responses WHERE user_id = ?',
-      [email]
-    );
+    // Check if survey already exists for this user
+    const existingSurvey = await db.collection('survey_responses').findOne({ user_id: email });
 
-    if (Array.isArray(existingUsers) && existingUsers.length > 0) {
-      await db.end();
+    if (existingSurvey) {
       return NextResponse.json(
         { error: 'Survey already taken' },
         { status: 400 }
       );
     }
 
-    // Insert new user
-    await db.execute(
-      'INSERT INTO survey_responses (user_id, weight, height,age,gender,experience_level, activity_level,workout_duration,health_conditions,workout_environment,fitness_goal,equipment, created_at, updated_at) VALUES (?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, NOW(), NOW())',
-      [email,weight,height,age,gender,experienceLevel,activityLevel,workoutDuration,healthConditions, workoutEnvironment,fitnessGoal,equipment]
-    );
-
-    await db.end();
+    // Insert new survey response
+    const result = await db.collection('survey_responses').insertOne({
+      user_id: email,
+      weight,
+      height,
+      age,
+      gender,
+      experience_level: experienceLevel,
+      activity_level: activityLevel,
+      workout_duration: workoutDuration,
+      health_conditions: healthConditions,
+      workout_environment: workoutEnvironment,
+      fitness_goal: fitnessGoal,
+      equipment,
+      created_at: new Date(),
+      updated_at: new Date()
+    });
     
     return NextResponse.json(
-      { message: 'Survey Updated successfully' },
+      { 
+        message: 'Survey updated successfully',
+        surveyId: result.insertedId.toString()
+      },
       { status: 201 }
     );
   } catch (error) {

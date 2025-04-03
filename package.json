@@ -53,6 +53,7 @@
     "input-otp": "1.4.1",
     "jsonwebtoken": "latest",
     "lucide-react": "^0.454.0",
+    "mongodb": "^6.15.0",
     "my-v0-project": "file:",
     "mysql2": "^3.14.0",
     "next": "15.2.4",

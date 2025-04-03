@@ -1,0 +1,358 @@
+use workitout_db;
+
+db.equipment.drop();
+db.exercise_categories.drop();
+db.health_conditions.drop();
+db.muscle_groups.drop();
+db.exercises.drop();
+db.users.drop();
+db.workout_templates.drop();
+db.workouts.drop();
+db.progress_tracking.drop();
+db.progress_logs.drop();
+db.survey_responses.drop();
+
+db.equipment.insertMany([
+  {
+    _id: 1,
+    name: "None",
+    description: "No equipment required",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 2,
+    name: "Dumbbells",
+    description: "Free weights that can be held in each hand",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 3,
+    name: "Barbell",
+    description: "A long metal bar with weights attached at each end",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 4,
+    name: "Kettlebell",
+    description: "A cast-iron weight with a handle",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 5,
+    name: "Resistance Bands",
+    description: "Elastic bands that provide resistance",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 6,
+    name: "Pull-up Bar",
+    description: "A horizontal bar for pull-up exercises",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 7,
+    name: "Bench",
+    description: "A flat or adjustable bench for various exercises",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 8,
+    name: "Yoga Mat",
+    description: "A mat for floor exercises and stretching",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 9,
+    name: "Medicine Ball",
+    description: "A weighted ball used for various exercises",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 10,
+    name: "Stability Ball",
+    description: "A large inflatable ball used for various exercises",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 11,
+    name: "TRX/Suspension Trainer",
+    description: "Straps with handles for bodyweight exercises",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  }
+]);
+
+db.exercise_categories.insertMany([
+  {
+    _id: 1,
+    name: "Strength",
+    description: "Exercises focused on building muscle strength and size",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 2,
+    name: "Cardio",
+    description: "Exercises focused on cardiovascular endurance",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 3,
+    name: "Flexibility",
+    description: "Exercises focused on improving range of motion and flexibility",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 4,
+    name: "Balance",
+    description: "Exercises focused on improving stability and balance",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 5,
+    name: "Core",
+    description: "Exercises focused on strengthening the core muscles",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  }
+]);
+
+db.health_conditions.insertMany([
+  {
+    _id: 1,
+    name: "Knee Issues",
+    description: "Problems with the knee joint or surrounding tissues",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 2,
+    name: "Back Pain",
+    description: "Pain in the lower, middle, or upper back",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 3,
+    name: "Shoulder Pain",
+    description: "Pain in the shoulder joint or surrounding tissues",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 4,
+    name: "Wrist Pain",
+    description: "Pain in the wrist joint or surrounding tissues",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 5,
+    name: "Ankle Issues",
+    description: "Problems with the ankle joint or surrounding tissues",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 6,
+    name: "High Blood Pressure",
+    description: "Elevated blood pressure levels",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 7,
+    name: "Heart Conditions",
+    description: "Various heart-related health issues",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 8,
+    name: "Pregnancy",
+    description: "Special considerations for pregnant individuals",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 9,
+    name: "Arthritis",
+    description: "Inflammation of the joints",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 10,
+    name: "Osteoporosis",
+    description: "Decreased bone density and increased risk of fractures",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  }
+]);
+
+db.muscle_groups.insertMany([
+  {
+    _id: 1,
+    name: "Chest",
+    description: "Pectoralis major and minor muscles",
+    body_part: "Upper Body",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 2,
+    name: "Back",
+    description: "Latissimus dorsi, rhomboids, and trapezius muscles",
+    body_part: "Upper Body",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  },
+  {
+    _id: 13,
+    name: "Full Body",
+    description: "Exercises that engage multiple muscle groups",
+    body_part: "Full Body",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z")
+  }
+]);
+
+db.users.insertMany([
+  {
+    _id: 1,
+    name: "Demo User",
+    email: "demo@workitout.com",
+    password: "$2a$10$XFE.rRUde3NmU9bWqAo5B.V6oRUxVK6TGnQOKVOhVt9shvwqsJ3ge",
+    profile_photo: null,
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z"),
+    preferences: {
+      theme: "dark",
+      notification_settings: {}
+    }
+  },
+  {
+    _id: 2,
+    name: "binil",
+    email: "bi@gmail.com",
+    password: "12345678",
+    profile_photo: null,
+    created_at: new Date("2025-04-03T14:05:27Z"),
+    updated_at: new Date("2025-04-03T14:05:27Z"),
+    preferences: {
+      theme: "dark",
+      notification_settings: {}
+    }
+  }
+]);
+
+db.exercises.insertMany([
+  {
+    _id: 1,
+    name: "Push-ups",
+    description: "A classic bodyweight exercise for the upper body",
+    type: "strength",
+    difficulty: "beginner",
+    instructions: "Start in a plank position with hands shoulder-width apart. Lower your body until your chest nearly touches the floor, then push back up.",
+    video_url: null,
+    image_url: null,
+    category_id: 1,
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z"),
+    equipment: [1],
+    muscle_groups: [
+      { muscle_group_id: 1, is_primary: true },
+      { muscle_group_id: 3, is_primary: false },
+      { muscle_group_id: 5, is_primary: false }
+    ],
+    contraindications: []
+  }
+]);
+
+db.workout_templates.insertMany([
+  {
+    _id: 1,
+    name: "Beginner Full Body",
+    type: "strength",
+    duration: "30",
+    difficulty: "beginner",
+    fitness_goal: "general-fitness",
+    description: "A full-body workout for beginners focusing on fundamental movements",
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z"),
+    exercises: [
+      {
+        exercise_id: 1,
+        sets: 3,
+        reps: "10",
+        rest_time: "60 sec",
+        notes: null,
+        order_index: 1
+      }
+    ]
+  }
+]);
+
+db.workouts.insertMany([
+  {
+    _id: 1,
+    user_id: 1,
+    name: "Beginner Full Body",
+    type: "strength",
+    duration: "30 min",
+    template_id: 1,
+    created_at: new Date("2025-04-03T13:50:35Z"),
+    updated_at: new Date("2025-04-03T13:50:35Z"),
+    exercises: [
+      {
+        name: "Push-ups",
+        type: "strength",
+        equipment: ["none"],
+        targetMuscles: ["chest", "shoulders", "triceps"],
+        sets: 3,
+        reps: 10
+      }
+    ]
+  }
+]);
+
+db.survey_responses.insertMany([
+  {
+    _id: 1,
+    user_id: "bi@gmail.com",
+    weight: 70,
+    height: 175,
+    age: 30,
+    gender: "male",
+    experience_level: "intermediate",
+    activity_level: "moderately-active",
+    workout_duration: "75",
+    health_conditions: ["high-blood-pressure"],
+    workout_environment: "home",
+    fitness_goal: "general-fitness",
+    equipment: ["kettlebells"],
+    created_at: new Date("2025-04-03T14:14:20Z"),
+    updated_at: new Date("2025-04-03T14:14:20Z")
+  }
+]);
+
+db.exercises.createIndex({ "type": 1 });
+db.exercises.createIndex({ "difficulty": 1 });
+db.exercises.createIndex({ "category_id": 1 });
+db.workout_templates.createIndex({ "type": 1 });
+db.workout_templates.createIndex({ "difficulty": 1 });
+db.workout_templates.createIndex({ "fitness_goal": 1 });
+db.users.createIndex({ "email": 1 }, { unique: true });

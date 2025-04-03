@@ -151,7 +151,7 @@ export default function WorkoutsPage() {
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filterWorkouts(workouts, "all").map((workout) => (
                     <WorkoutCard
-                      key={workout.id}
+                      key={workout._id}
                       workout={workout}
                       onClick={() => handleWorkoutClick(workout)}
                     />
