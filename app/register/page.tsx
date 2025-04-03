@@ -1,83 +1,83 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { Dumbbell, ArrowLeft, Eye, EyeOff } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Dumbbell, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Register() {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
   const [errors, setErrors] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
 
   const validateForm = () => {
-    let isValid = true
+    let isValid = true;
     const newErrors = {
       name: "",
       email: "",
       password: "",
       confirmPassword: "",
-    }
+    };
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
-      isValid = false
+      newErrors.name = "Name is required";
+      isValid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
-      isValid = false
+      newErrors.email = "Email is required";
+      isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
-      isValid = false
+      newErrors.email = "Email is invalid";
+      isValid = false;
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required"
-      isValid = false
+      newErrors.password = "Password is required";
+      isValid = false;
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters"
-      isValid = false
+      newErrors.password = "Password must be at least 8 characters";
+      isValid = false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
-      isValid = false
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
     }
 
-    setErrors(newErrors)
-    return isValid
-  }
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Clear error when user types
     if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }))
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,10 +87,10 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
+      const response = await fetch("/api/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: formData.name,
@@ -100,22 +100,25 @@ export default function Register() {
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        throw new Error("Registration failed");
       }
 
       toast({
         title: "Account created!",
-        description: "You've successfully registered. Redirecting to the survey...",
+        description:
+          "You've successfully registered. Redirecting to the survey...",
       });
 
       // Redirect to survey after successful registration
+      localStorage.setItem("userEmail", formData.email);
       setTimeout(() => {
-        router.push(`/survey?email=${encodeURIComponent(formData.email)}`);
+        router.push(`/survey`);
       }, 1000);
     } catch (error) {
       toast({
         title: "Registration failed",
-        description: "There was an error creating your account. Please try again.",
+        description:
+          "There was an error creating your account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -138,7 +141,9 @@ export default function Register() {
               <span className="text-xl font-bold">WorkItOut</span>
             </Link>
             <h1 className="text-2xl font-bold">Create your account</h1>
-            <p className="text-sm text-muted-foreground">Start your fitness journey with WorkItOut</p>
+            <p className="text-sm text-muted-foreground">
+              Start your fitness journey with WorkItOut
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -154,7 +159,9 @@ export default function Register() {
                 disabled={isLoading}
                 className={errors.name ? "border-destructive" : ""}
               />
-              {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-xs text-destructive">{errors.name}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -169,7 +176,9 @@ export default function Register() {
                 disabled={isLoading}
                 className={errors.email ? "border-destructive" : ""}
               />
-              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-xs text-destructive">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -183,17 +192,25 @@ export default function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className={errors.password ? "border-destructive pr-10" : "pr-10"}
+                  className={
+                    errors.password ? "border-destructive pr-10" : "pr-10"
+                  }
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -208,7 +225,11 @@ export default function Register() {
                 disabled={isLoading}
                 className={errors.confirmPassword ? "border-destructive" : ""}
               />
-              {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && (
+                <p className="text-xs text-destructive">
+                  {errors.confirmPassword}
+                </p>
+              )}
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
@@ -218,13 +239,19 @@ export default function Register() {
 
           <div className="text-center text-sm">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
               Log in
             </Link>
           </div>
 
           <div className="flex items-center justify-center">
-            <Link href="/" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              href="/"
+              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
               <ArrowLeft className="h-4 w-4" />
               Back to home
             </Link>
@@ -232,6 +259,5 @@ export default function Register() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
-

@@ -4,7 +4,7 @@ export async function connectDB() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'qpalzm123',
+    password: 'root',
     database: 'workitout_db'
   });
   return connection;

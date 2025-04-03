@@ -1,17 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronRight, Play, Clock, Flame, Award, Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, Legend } from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardSidebar } from "@/components/dashboard-sidebar"
-import { WorkoutModal } from "@/components/workout-modal"
+import { useEffect, useState } from "react";
+import { ChevronRight, Play, Clock, Flame, Award, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { WorkoutModal } from "@/components/workout-modal";
 
 // Mock data for charts
 const workoutData = [
@@ -22,14 +36,14 @@ const workoutData = [
   { day: "Fri", minutes: 0, calories: 0 },
   { day: "Sat", minutes: 75, calories: 520 },
   { day: "Sun", minutes: 45, calories: 350 },
-]
+];
 
 const progressData = [
   { exercise: "Push-ups", week1: 10, week2: 12, week3: 15, week4: 18 },
   { exercise: "Pull-ups", week1: 5, week2: 6, week3: 8, week4: 10 },
   { exercise: "Squats", week1: 15, week2: 20, week3: 25, week4: 30 },
   { exercise: "Plank (sec)", week1: 30, week2: 45, week3: 60, week4: 90 },
-]
+];
 
 // Today's workout
 const todaysWorkout = {
@@ -42,28 +56,76 @@ const todaysWorkout = {
     { name: "Lunges", sets: 3, reps: 10 },
     { name: "Plank", sets: 3, reps: "30 sec" },
   ],
-}
+};
 
 // Upcoming workouts
 const upcomingWorkouts = [
   { day: "Tomorrow", name: "Upper Body Focus", duration: "30 min" },
   { day: "Wednesday", name: "Lower Body & Core", duration: "45 min" },
   { day: "Friday", name: "HIIT Cardio", duration: "25 min" },
-]
+];
 
 export default function Dashboard() {
-  const [showWorkoutModal, setShowWorkoutModal] = useState(false)
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const email = localStorage.getItem("userEmail");
+
+    if (email) {
+      setUserEmail(email);
+    }
+  }, []);
+
+  // Fetch user profile data when email is available
+  useEffect(() => {
+    async function fetchUserProfile() {
+      if (!userEmail) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/user-profile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: userEmail }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
+
+        const data = await response.json();
+        console.log("User Profile Data:", data);
+        setUserProfile(data);
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+        setError("Could not load your profile data");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchUserProfile();
+  }, [userEmail]);
+
+  const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   // Add state for expanded tiles
-  const [expandedTile, setExpandedTile] = useState<string | null>(null)
+  const [expandedTile, setExpandedTile] = useState<string | null>(null);
 
   // Add a function to toggle tile expansion
   const toggleTileExpansion = (tileId: string) => {
     if (expandedTile === tileId) {
-      setExpandedTile(null)
+      setExpandedTile(null);
     } else {
-      setExpandedTile(tileId)
+      setExpandedTile(tileId);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -76,7 +138,10 @@ export default function Dashboard() {
           <div className="container py-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-bold">Dashboard</h1>
-              <Button onClick={() => setShowWorkoutModal(true)} className="gap-2">
+              <Button
+                onClick={() => setShowWorkoutModal(true)}
+                className="gap-2"
+              >
                 <Play className="h-4 w-4" /> Start Workout
               </Button>
             </div>
@@ -85,7 +150,9 @@ export default function Dashboard() {
               {/* User Profile Tile */}
               <Card
                 className={`dashboard-tile transition-all duration-300 ${
-                  expandedTile === "profile" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "profile"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("profile")}
               >
@@ -99,14 +166,22 @@ export default function Dashboard() {
                       <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">Demo</p>
-                      <p className="text-sm text-muted-foreground">Intermediate Level</p>
+                      <p className="font-medium capitalize">
+                        {userProfile && userProfile.userData.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {userProfile && userProfile.experience_level}
+                      </p>
                       <div className="mt-2 flex items-center gap-3">
                         <div className="flex items-center gap-1">
-                          <span className="text-xs text-muted-foreground">75kg</span>
+                          <span className="text-xs text-muted-foreground">
+                            {userProfile && userProfile.weight}kg
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-xs text-muted-foreground">178cm</span>
+                          <span className="text-xs text-muted-foreground">
+                            {userProfile && userProfile.height}cm
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -125,8 +200,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -137,7 +212,9 @@ export default function Dashboard() {
               {/* Today's Workout Tile */}
               <Card
                 className={`dashboard-tile transition-all duration-300 ${
-                  expandedTile === "workout" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "workout"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("workout")}
               >
@@ -153,24 +230,29 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    {todaysWorkout.exercises.slice(0, 3).map((exercise, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between rounded-md border border-border p-2"
-                      >
-                        <span>{exercise.name}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {exercise.sets} × {exercise.reps}
-                        </span>
-                      </div>
-                    ))}
+                    {todaysWorkout.exercises
+                      .slice(0, 3)
+                      .map((exercise, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded-md border border-border p-2"
+                        >
+                          <span>{exercise.name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {exercise.sets} × {exercise.reps}
+                          </span>
+                        </div>
+                      ))}
                     {todaysWorkout.exercises.length > 3 && (
                       <div className="text-center text-sm text-primary">
                         +{todaysWorkout.exercises.length - 3} more exercises
                       </div>
                     )}
                   </div>
-                  <Button className="mt-4 w-full gap-2" onClick={() => setShowWorkoutModal(true)}>
+                  <Button
+                    className="mt-4 w-full gap-2"
+                    onClick={() => setShowWorkoutModal(true)}
+                  >
                     <Play className="h-4 w-4" /> Start Workout
                   </Button>
                 </CardContent>
@@ -180,8 +262,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -192,7 +274,9 @@ export default function Dashboard() {
               {/* Streak Tile */}
               <Card
                 className={`dashboard-tile transition-all duration-300 ${
-                  expandedTile === "streak" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "streak"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("streak")}
               >
@@ -206,14 +290,18 @@ export default function Dashboard() {
                         <Flame className="h-5 w-5 text-orange-500" />
                         <span className="text-2xl font-bold">5</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">Day Streak</p>
+                      <p className="text-sm text-muted-foreground">
+                        Day Streak
+                      </p>
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <Award className="h-5 w-5 text-yellow-500" />
                         <span className="text-2xl font-bold">12</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">Best Streak</p>
+                      <p className="text-sm text-muted-foreground">
+                        Best Streak
+                      </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-7 gap-1">
@@ -221,7 +309,9 @@ export default function Dashboard() {
                       <div key={index} className="flex flex-col items-center">
                         <div
                           className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                            day.minutes > 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                            day.minutes > 0
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground"
                           }`}
                         >
                           {day.minutes > 0 ? "✓" : "–"}
@@ -237,8 +327,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -249,7 +339,9 @@ export default function Dashboard() {
               {/* Weekly Activity Chart */}
               <Card
                 className={`dashboard-tile md:col-span-2 transition-all duration-300 ${
-                  expandedTile === "activity" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "activity"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("activity")}
               >
@@ -263,7 +355,10 @@ export default function Dashboard() {
                         <TabsTrigger value="minutes">Minutes</TabsTrigger>
                         <TabsTrigger value="calories">Calories</TabsTrigger>
                       </TabsList>
-                      <TabsContent value="minutes" className="h-[200px] w-full overflow-hidden">
+                      <TabsContent
+                        value="minutes"
+                        className="h-[200px] w-full overflow-hidden"
+                      >
                         <ChartContainer
                           config={{
                             minutes: {
@@ -274,7 +369,10 @@ export default function Dashboard() {
                           className="w-full h-full"
                         >
                           <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={workoutData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                            <AreaChart
+                              data={workoutData}
+                              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                            >
                               <CartesianGrid strokeDasharray="3 3" />
                               <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                               <YAxis tick={{ fontSize: 12 }} width={30} />
@@ -290,7 +388,10 @@ export default function Dashboard() {
                           </ResponsiveContainer>
                         </ChartContainer>
                       </TabsContent>
-                      <TabsContent value="calories" className="h-[200px] w-full overflow-hidden">
+                      <TabsContent
+                        value="calories"
+                        className="h-[200px] w-full overflow-hidden"
+                      >
                         <ChartContainer
                           config={{
                             calories: {
@@ -301,7 +402,10 @@ export default function Dashboard() {
                           className="w-full h-full"
                         >
                           <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={workoutData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                            <AreaChart
+                              data={workoutData}
+                              margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                            >
                               <CartesianGrid strokeDasharray="3 3" />
                               <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                               <YAxis tick={{ fontSize: 12 }} width={30} />
@@ -326,8 +430,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -338,7 +442,9 @@ export default function Dashboard() {
               {/* Upcoming Workouts */}
               <Card
                 className={`dashboard-tile transition-all duration-300 ${
-                  expandedTile === "upcoming" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "upcoming"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("upcoming")}
               >
@@ -354,11 +460,19 @@ export default function Dashboard() {
                       >
                         <div>
                           <p className="font-medium">{workout.name}</p>
-                          <p className="text-sm text-muted-foreground">{workout.day}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {workout.day}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">{workout.duration}</span>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <span className="text-sm text-muted-foreground">
+                            {workout.duration}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </div>
@@ -375,8 +489,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -387,7 +501,9 @@ export default function Dashboard() {
               {/* Progress Chart */}
               <Card
                 className={`dashboard-tile lg:col-span-2 transition-all duration-300 ${
-                  expandedTile === "progress" ? "fixed inset-4 z-50 overflow-auto" : ""
+                  expandedTile === "progress"
+                    ? "fixed inset-4 z-50 overflow-auto"
+                    : ""
                 }`}
                 onClick={() => toggleTileExpansion("progress")}
               >
@@ -418,7 +534,10 @@ export default function Dashboard() {
                       className="w-full h-full"
                     >
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={progressData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+                        <BarChart
+                          data={progressData}
+                          margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                        >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="exercise" tick={{ fontSize: 12 }} />
                           <YAxis tick={{ fontSize: 12 }} width={30} />
@@ -439,8 +558,8 @@ export default function Dashboard() {
                     size="icon"
                     className="absolute right-2 top-2"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      setExpandedTile(null)
+                      e.stopPropagation();
+                      setExpandedTile(null);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -452,11 +571,17 @@ export default function Dashboard() {
         </main>
       </div>
 
-      <WorkoutModal open={showWorkoutModal} onClose={() => setShowWorkoutModal(false)} workout={todaysWorkout} />
+      <WorkoutModal
+        open={showWorkoutModal}
+        onClose={() => setShowWorkoutModal(false)}
+        workout={todaysWorkout}
+      />
       {expandedTile && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40" onClick={() => setExpandedTile(null)} />
+        <div
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
+          onClick={() => setExpandedTile(null)}
+        />
       )}
     </div>
-  )
+  );
 }
-
